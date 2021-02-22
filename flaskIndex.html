@@ -1,0 +1,37 @@
+<div class='messages'></div>
+<form>
+    <input type='text' class='nickname'>
+    <input type='text' class='message'>
+    <input type='submit' class='전송'>
+</form>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.4/socket.io.min.js" integrity="sha512-qXjK7fRhV6plK/Vpaknn+5Fe0dXhJqdbiQKpLghl0XKir10zEEzSNqheA1MY7nh9H8cu7giAYTibHTBvt37PQg==" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script>
+    const socket = io.connect('http://' + document.doamin + ':' + location.port);
+    
+    socket.on('connect', function(){
+       socket.emit('connected'); 
+        
+        const form = $('form').on('submit', function(e) {
+            e.preventDefault();
+            const nickname = $('input.nickname').val();
+            const message = $('input.message').val();
+           
+            socket.emit('chat', {
+                nickname: nickname,
+                message: message
+            });
+            
+            $('input.message').val('').focus();
+            
+        });
+    });
+    
+    socket.on('response', function(msg){
+       $('dev.messages').append('<div><b style="color:blue">' + msg.nickname + '</b> ' + msg.message + '</div>');
+    });
+    
+    
+</script>
